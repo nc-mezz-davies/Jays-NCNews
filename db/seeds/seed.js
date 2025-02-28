@@ -1,8 +1,11 @@
 const db = require("../connection");
-const articles = require("../data/test-data/articles");
-const users = require("../data/test-data/users");
+
+const {
+   convertTimestampToDate 
+  } = require("../seeds/utils.js")
+
 const format = require("pg-format");
-const { convertTimestampToDate } = require("./utils");
+
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -41,7 +44,7 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return insertCommentData(commentData);
     });
 };
-module.exports = seed;
+
 
 function createTopics() {
   return db.query(`CREATE TABLE topics(
@@ -118,7 +121,6 @@ function insertUserData(data) {
 }
 
 function insertArticleData(data) {
-  //const date = convertTimestampToDate(data.created_at);
   const sql = format(
     `INSERT INTO articles 
     ( title, topic, author, body, created_at, votes, article_img_url) 
@@ -126,18 +128,20 @@ function insertArticleData(data) {
     %L
     RETURNING * 
     `,
-    data.map((item) => [
-      
+    data.map((item) => {
+      const {created_at, ...otherProperties} = convertTimestampToDate(item);
+      return [
       item.title,
       item.topic,
       item.author,
       item.body,
-      new Date(item.created_at),
+      created_at,
       item.votes,
       item.article_img_url,
-    ]
+      
+    ];
   
-  )
+})
   );
   return db.query(sql);
 }
@@ -150,14 +154,20 @@ function insertCommentData(data) {
     %L
     RETURNING * 
     `,
-    data.map((item) => [
-      
+    data.map((item) => {
+      const {created_at, ...otherProperties} = convertTimestampToDate(item);
+return [
       item.body,
       item.article_id,
       item.author,
       item.votes,
-      new Date(item.created_at),
-    ])
+      created_at,
+    ]
+  })
   );
   return db.query(sql);
 }
+
+module.exports = seed;
+
+
