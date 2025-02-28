@@ -9,40 +9,43 @@ const format = require("pg-format");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
-    .query("DROP TABLE IF EXISTS topics CASCADE") //<< write your first query in here.
+    .query("DROP TABLE IF EXISTS comments CASCADE") //<< write your first query in here.
     .then(() => {
-      return createTopics();
+      return db.query("DROP TABLE IF EXISTS articles CASCADE");
     })
     .then(() => {
       return db.query("DROP TABLE IF EXISTS users CASCADE");
     })
     .then(() => {
-      return createUsers();
+      return db.query("DROP TABLE IF EXISTS topics CASCADE");
     })
     .then(() => {
-      return db.query("DROP TABLE IF EXISTS articles CASCADE");
-    })
-    .then(() => {
-      return createArticles();
-    })
-    .then(() => {
-      return db.query("DROP TABLE IF EXISTS comments CASCADE");
-    })
-    .then(() => {
-      return createComments();
+      return createTopics();
     })
     .then(() => {
       return insertTopicData(topicData);
     })
     .then(() => {
+      return createUsers();
+    })
+    .then(() => {
       return insertUserData(userData);
+    })
+    
+    .then(() => {
+      return createArticles();
+    })
+    .then(() => {
+      return createComments();
     })
     .then(() => {
       return insertArticleData(articleData);
     })
-    .then(() => {
-      return insertCommentData(commentData);
+    .then((articles) => { 
+      return insertCommentData(commentData, articles);
     });
+    
+    
 };
 
 
@@ -56,7 +59,7 @@ function createTopics() {
 
 function createUsers() {
   return db.query(`CREATE TABLE users(
-    username VARCHAR PRIMARY KEY, 
+    username VARCHAR UNIQUE PRIMARY KEY, 
     name VARCHAR , 
     avatar_url VARCHAR(1000)  
     )`);
@@ -76,6 +79,7 @@ function createArticles() {
        FOREIGN KEY (author) REFERENCES users(username) ON DELETE CASCADE
 
     )`);
+   
 }
 
 function createComments() {
@@ -131,6 +135,7 @@ function insertArticleData(data) {
     data.map((item) => {
       const {created_at, ...otherProperties} = convertTimestampToDate(item);
       return [
+      
       item.title,
       item.topic,
       item.author,
@@ -143,10 +148,18 @@ function insertArticleData(data) {
   
 })
   );
-  return db.query(sql);
+  return db.query(sql).then((result) => {
+    console.log("Inserted articles with IDs:", result.rows);
+    return result.rows; 
+  });;
 }
 
-function insertCommentData(data) {
+function insertCommentData(data, articles) {
+  const articleLookup = articles.reduce((lookup, article) => {
+    lookup[article.title] = article.article_id;  
+    return lookup;
+  }, {});
+  
   const sql = format(
     `INSERT INTO comments 
     ( body, article_id, author, votes, created_at) 
@@ -155,17 +168,22 @@ function insertCommentData(data) {
     RETURNING * 
     `,
     data.map((item) => {
+     
+
       const {created_at, ...otherProperties} = convertTimestampToDate(item);
-return [
+      const article_id = articleLookup[item.article_title];      return [
       item.body,
-      item.article_id,
+      article_id,
       item.author,
       item.votes,
       created_at,
     ]
   })
   );
-  return db.query(sql);
+  return db.query(sql).then((result) => {
+    console.log("Inserted comments:", result.rows);
+    return result.rows;
+  });;
 }
 
 module.exports = seed;
