@@ -149,7 +149,7 @@ function insertArticleData(data) {
 })
   );
   return db.query(sql).then((result) => {
-    console.log("Inserted articles with IDs:", result.rows);
+    //console.log("Inserted articles with IDs:", result.rows);
     return result.rows; 
   });;
 }
@@ -181,7 +181,7 @@ function insertCommentData(data, articles) {
   })
   );
   return db.query(sql).then((result) => {
-    console.log("Inserted comments:", result.rows);
+   // console.log("Inserted comments:", result.rows);
     return result.rows;
   });;
 }
