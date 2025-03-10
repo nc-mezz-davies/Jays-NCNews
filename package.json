@@ -4,6 +4,7 @@
   "description": "bc-nc-news",
   "main": "listen.js",
   "scripts": {
+    "playground": "psql -f ./query_tasks/sql_playground.sql",
     "setup-dbs": "psql -f ./db/setup-dbs.sql",
     "seed-dev": "node ./db/seeds/run-seed.js",
     "test": "jest",
@@ -25,13 +26,16 @@
   "devDependencies": {
     "husky": "^8.0.2",
     "jest": "^27.5.1",
-    "jest-extended": "^2.0.0"
+    "jest-extended": "^2.0.0",
+    "supertest": "^7.0.0"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "pg": "^8.13.3",
     "pg-format": "^1.0.4",
-    "psql": "^0.0.1"
+    "psql": "^0.0.1",
+    "request": "^2.88.2"
   },
   "jest": {
     "setupFilesAfterEnv": [
