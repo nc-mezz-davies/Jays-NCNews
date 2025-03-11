@@ -3,7 +3,7 @@ const seed = require('../db/seeds/seed');
 const data = require('../db/data/test-data/index');
 
 beforeEach(() => seed(data));
-afterEach(() => db.end());
+afterAll(() => db.end());
 
 describe('seed', () => {
   describe('topics table', () => {
