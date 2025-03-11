@@ -105,7 +105,7 @@ describe("GET /api/articles/", () => {
 });
 
 describe("GET /api/articles/:article_id/comments", () => {
-  test.only("200: Responds with comments of an article_id", () => {
+  test("200: Responds with comments of an article_id", () => {
     return request(app)
       .get("/api/articles/3/comments")
       .expect(200)
