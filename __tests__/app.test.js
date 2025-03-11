@@ -133,12 +133,12 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
       
   });
-  test("404: comments not found", () => {
+  test("200: comments not found", () => {
     return request(app)
-      .get("/api/articles/7/comments") //???
-      .expect(404)
+      .get("/api/articles/7/comments") 
+      .expect(200)
       .then((res) => {
-        expect(res.body.msg).toBe("comments not found");
+        expect(res.body.comments).toEqual([]);
       });
   });
 

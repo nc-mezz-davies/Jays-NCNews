@@ -24,10 +24,7 @@ const fetchCommentsByArticleID = (id) => {
     })
     .then(({ rows }) => {
      
-      if (rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "comments not found" });
-      }
-      return rows; 
+      return rows.length > 0 ? rows : [];
     });
 };
 
