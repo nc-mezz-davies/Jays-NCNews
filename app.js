@@ -12,5 +12,6 @@ app.get("/api/topics", getTopics)
 
 app.get("/api/articles/:articleid", getArticlesByID)
 
+app.get("/api/articles", getArticles)
 
 module.exports = {app, endpointsJson};
