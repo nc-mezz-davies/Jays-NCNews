@@ -104,13 +104,14 @@ describe("GET /api/articles/", () => {
   });
 });
 
-describe("GET /api/articles/:articleid/comments", () => {
-  test("200: Responds with comments of an article_id", () => {
+describe("GET /api/articles/:article_id/comments", () => {
+  test.only("200: Responds with comments of an article_id", () => {
     return request(app)
       .get("/api/articles/3/comments")
       .expect(200)
       .then((res) => {
-        expect(res.body.comments[0].length).toBe(2);
+       
+        expect(res.body.comments.length).toBe(2);
         for (let i = 0; i < res.body.comments[0].length - 1; i++) {
         expect(typeof res.body.comments[0][i].comment_id).toBe("number");
         expect(typeof res.body.comments[0][i].article_id).toBe("number");
@@ -119,18 +120,28 @@ describe("GET /api/articles/:articleid/comments", () => {
         expect(typeof res.body.comments[0][i].author).toBe("string");
         expect(typeof res.body.comments[0][i].created_at).toBe("string");
         }
-        let datesArray = res.body.comments[0].map(comment => new Date(comment.created_at));
+        let datesArray = res.body.comments.map(comment => new Date(comment.created_at));
         expect(datesArray).toBeSorted({descending: true})
       });
   });
   test("404: article_id not found", () => {
     return request(app)
-      .get("/api/articles/2000/comments")
+      .get("/api/articles/2000/comments") 
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Article not found");
+      });
+      
+  });
+  test("404: comments not found", () => {
+    return request(app)
+      .get("/api/articles/7/comments") //???
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("comments not found");
       });
   });
+
   test("400: invalid article_id", () => {
     return request(app)
       .get("/api/articles/abc/comments")

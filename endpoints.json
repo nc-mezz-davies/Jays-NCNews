@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order", ":article_id"],
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
@@ -31,7 +31,7 @@
   
 "GET /api/articles/:articleid": {
     "description": "serves an array of all articles from article_id",
-    "queries": ["author", "topic", ":article_id", "title", "body", "created_at", "votes", "article_img_url"],
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
@@ -51,7 +51,7 @@
 
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments from an article_ID",
-    "queries": ["author", "topic", "sort_by", "order", ":article_id"],
+    "queries": [],
     "exampleResponse": {
       "comments": [
         {

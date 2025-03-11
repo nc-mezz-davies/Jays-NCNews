@@ -10,15 +10,17 @@ const getArticles = (req, res, next) => {
 };
 
 const getArticlesByID = (req, res, next) => {
-  const article_id = req.params.articleid;
+  const article_id = req.params.article_id;
+    
 
   fetchArticlesByID(article_id)
     .then((article) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
-      next(err); 
-        });
-};
+    
+      next(err);
+    });
+  };
 
 module.exports = { getArticles, getArticlesByID };
