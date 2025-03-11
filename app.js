@@ -12,7 +12,7 @@ res.status(200).json({endpoints: endpointsJson});
 app.get("/api/topics", getTopics)
 
 app.get("/api/articles/:articleid", getArticlesByID)
-//err 400 & 404
+
 
 app.get("/api/articles", getArticles)
 

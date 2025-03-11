@@ -119,6 +119,8 @@ describe("GET /api/articles/:articleid/comments", () => {
         expect(typeof res.body.comments[0][i].author).toBe("string");
         expect(typeof res.body.comments[0][i].created_at).toBe("string");
         }
+        let datesArray = res.body.comments[0].map(comment => new Date(comment.created_at));
+        expect(datesArray).toBeSorted({descending: true})
       });
   });
   test("404: article_id not found", () => {
