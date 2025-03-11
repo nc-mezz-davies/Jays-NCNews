@@ -11,17 +11,17 @@ res.status(200).json({endpoints: endpointsJson});
 
 app.get("/api/topics", getTopics)
 
-app.get("/api/articles/:articleid", getArticlesByID)
+app.get("/api/articles/:article_id", getArticlesByID)
 
 
 app.get("/api/articles", getArticles)
 
-app.get("/api/articles/:articleid/comments", getCommentsByArticleID)
+app.get("/api/articles/:article_id/comments", getCommentsByArticleID)
 
 
 app.use((err, req, res, next) => {
     const { status = 500, msg = "Internal Server Error" } = err;
-    res.status(status).send({ msg }); 
+    res.status(status).send({ msg });
   });
 
 module.exports = {app, endpointsJson};

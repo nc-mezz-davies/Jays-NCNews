@@ -1,16 +1,17 @@
 const {fetchCommentsByArticleID} = require("../Models/comments.models.js")
 
 const getCommentsByArticleID = (req, res, next) => {
-  const article_id = req.params.articleid; 
+  const article_id = req.params.article_id;
 
-  return Promise.all([fetchCommentsByArticleID(article_id)])
-      .then((comments) => {
-        res.status(200).send({ comments }); 
-      }).catch((err) => {
+  fetchCommentsByArticleID(article_id)
+    .then((comments) => {
      
-        next(err);
-      });
-  };
+      res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
   
   
