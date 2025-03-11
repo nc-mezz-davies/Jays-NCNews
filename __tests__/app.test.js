@@ -66,7 +66,6 @@ describe("GET /api/articles/", () => {
       .then((res) => {
         const articles = res.body.articles;
 
-        console.log(res.body);
         expect(articles.length).toBeGreaterThan(0);
 
         for (let i = 0; i < articles.length - 1; i++) {
