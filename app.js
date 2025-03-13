@@ -1,27 +1,50 @@
 const express = require("express");
 const app = express();
 const endpointsJson = require("./endpoints.json");
-const {getTopics} = require("./MVC/Controllers/topics.controllers.js");
-const { getArticles, getArticlesByID } = require("./MVC/Controllers/articles.controllers.js");
-const { getCommentsByArticleID } = require("./MVC/Controllers/comments.controllers.js");
+const { getTopics } = require("./MVC/Controllers/topics.controllers.js");
+const {
+  handleCustomErrors,
+  handleServerErrors
+} = require("./middleware/errorHandler.js");
 
-app.get("/api", (req, res)=>{
-res.status(200).json({endpoints: endpointsJson});
-})
+const {
+  getArticles,
+  getArticlesByID,
+} = require("./MVC/Controllers/articles.controllers.js");
+const {
+  getCommentsByArticleID,
+  postCommentOnArticleID
+} = require("./MVC/Controllers/comments.controllers.js");
+const  validateComment  = require("./middleware/post.js");
+app.get("/api", (req, res) => {
+  res.status(200).json({ endpoints: endpointsJson });
+});
 
-app.get("/api/topics", getTopics)
+app.use(express.json());
 
-app.get("/api/articles/:article_id", getArticlesByID)
+app.get("/api/topics", getTopics);
+
+app.get("/api/articles/:article_id", getArticlesByID); 
+
+app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
+
+app.post("/api/articles/:article_id/comments", postCommentOnArticleID);
 
 
-app.get("/api/articles", getArticles)
-
-app.get("/api/articles/:article_id/comments", getCommentsByArticleID)
 
 
-app.use((err, req, res, next) => {
-    const { status = 500, msg = "Internal Server Error" } = err;
-    res.status(status).send({ msg });
-  });
+app.use(handleCustomErrors);
+app.use(handleServerErrors);
 
-module.exports = {app, endpointsJson};
+// app.use((err, req, res, next) => {
+//   const { status = 500, msg = "Internal Server Error" } = err;
+// //more handlers
+//   res.status(status).send({ msg });
+//});
+
+
+
+
+module.exports = { app, endpointsJson };

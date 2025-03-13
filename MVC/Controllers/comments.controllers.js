@@ -1,18 +1,37 @@
-const {fetchCommentsByArticleID} = require("../Models/comments.models.js")
+const validateComment = require("../../middleware/post.js");
+const {
+  fetchCommentsByArticleID,
+  insertComment,
+  checkArticleExists
+} = require("../Models/comments.models.js");
 
 const getCommentsByArticleID = (req, res, next) => {
-  const article_id = req.params.article_id;
+  const { article_id } = req.params;
 
-  fetchCommentsByArticleID(article_id)
-    .then((comments) => {
-     
-      res.status(200).send({ comments });
+  checkArticleExists(article_id)
+    .then(() => {
+      return fetchCommentsByArticleID(article_id);
     })
-    .catch((err) => {
-      next(err);
-    });
+    .then((comments) => {
+      res.status(200).json({ comments });
+    })
+    .catch(next);
 };
 
-  
-  
-  module.exports = { getCommentsByArticleID};
+const postCommentOnArticleID = (req, res, next) => {
+
+  const { body, author } = req.body;
+  const { article_id } = req.params;
+
+  insertComment(article_id, body, author)
+    .then((newComment) => {
+      res.status(201).json({ comment: newComment });
+    })
+    .catch((err) => {
+      
+      next(err);
+    });
+
+};
+
+module.exports = { getCommentsByArticleID, postCommentOnArticleID };
