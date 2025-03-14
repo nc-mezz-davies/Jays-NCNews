@@ -87,7 +87,7 @@ function createComments() {
     comment_id SERIAL PRIMARY KEY NOT NULL, 
     article_id INT, 
     body TEXT ,
-    votes INT , 
+    votes INT DEFAULT 0, 
     author VARCHAR,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE,

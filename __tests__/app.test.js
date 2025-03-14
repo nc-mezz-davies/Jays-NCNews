@@ -1,17 +1,25 @@
 const endpointsJson = require("../endpoints.json");
 const request = require("supertest");
-const db = require("../db/connection.js");
+const db = require("../db/connection");
 const { app } = require("../app.js");
 const testData = require("../db/data/test-data/index.js");
 const seed = require("../db/seeds/seed.js");
-require('jest-sorted');
+let server;
+require("jest-sorted");
 
-beforeEach(() => {
-  return seed(testData);
+beforeEach(async () => {
+  if (server) {
+    await server.close(); // Close any previous instance before starting a new one
+  }
+  server = app.listen(4000);
+  await seed(testData);
 });
 
-afterAll(() => {
-  return db.end();
+afterAll(async () => {
+  if (server) {
+    await server.close();
+  }
+  await db.end(); // Close DB connection
 });
 
 describe("GET /api", () => {
@@ -62,7 +70,7 @@ describe("GET /api/articles/:articleid", () => {
       .get("/api/articles/2000")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Article not found");
+        expect(res.body).toEqual({ error: "Article not found" });
       });
   });
   test("400: invalid article_id", () => {
@@ -70,7 +78,7 @@ describe("GET /api/articles/:articleid", () => {
       .get("/api/articles/abc")
       .expect(400)
       .then((res) => {
-        expect(res.body.msg).toBe("Invalid article ID");
+        expect(res.body).toEqual({ error: "Invalid article ID"});
       });
   });
 });
@@ -94,12 +102,11 @@ describe("GET /api/articles/", () => {
           expect(typeof articles[i].votes).toBe("number");
           expect(typeof articles[i].article_img_url).toBe("string");
           expect(typeof articles[i].comment_count).toBe("number");
-
-         
-          
         }
-        let datesArray = articles.map(article => new Date(article.created_at));
-        expect(datesArray).toBeSorted({descending: true})
+        let datesArray = articles.map(
+          (article) => new Date(article.created_at)
+        );
+        expect(datesArray).toBeSorted({ descending: true });
       });
   });
 });
@@ -110,32 +117,32 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/3/comments")
       .expect(200)
       .then((res) => {
-       
         expect(res.body.comments.length).toBe(2);
         for (let i = 0; i < res.body.comments[0].length - 1; i++) {
-        expect(typeof res.body.comments[0][i].comment_id).toBe("number");
-        expect(typeof res.body.comments[0][i].article_id).toBe("number");
-        expect(typeof res.body.comments[0][i].body).toBe("string");
-        expect(typeof res.body.comments[0][i].votes).toBe("number");
-        expect(typeof res.body.comments[0][i].author).toBe("string");
-        expect(typeof res.body.comments[0][i].created_at).toBe("string");
+          expect(typeof res.body.comments[0][i].comment_id).toBe("number");
+          expect(typeof res.body.comments[0][i].article_id).toBe("number");
+          expect(typeof res.body.comments[0][i].body).toBe("string");
+          expect(typeof res.body.comments[0][i].votes).toBe("number");
+          expect(typeof res.body.comments[0][i].author).toBe("string");
+          expect(typeof res.body.comments[0][i].created_at).toBe("string");
         }
-        let datesArray = res.body.comments.map(comment => new Date(comment.created_at));
-        expect(datesArray).toBeSorted({descending: true})
+        let datesArray = res.body.comments.map(
+          (comment) => new Date(comment.created_at)
+        );
+        expect(datesArray).toBeSorted({ descending: true });
       });
   });
   test("404: article_id not found", () => {
     return request(app)
-      .get("/api/articles/2000/comments") 
+      .get("/api/articles/2000/comments")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("Article not found");
+        expect(res.body).toEqual({ error: "Article not found" });
       });
-      
   });
   test("200: comments not found", () => {
     return request(app)
-      .get("/api/articles/7/comments") 
+      .get("/api/articles/7/comments")
       .expect(200)
       .then((res) => {
         expect(res.body.comments).toEqual([]);
@@ -147,7 +154,77 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/abc/comments")
       .expect(400)
       .then((res) => {
-        expect(res.body.msg).toBe("Invalid article ID");
+        expect(res.body).toEqual({ error: "Invalid Article ID" });  
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should add a new comment and retrieve it", async () => {
+    const commentData = {
+      body: "test comment", 
+      author: "icellusedkars",
+    };
+
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(commentData)
+.expect(201).then((res) =>{
+ 
+ return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments.length).toBe(3);
+        for (let i = 0; i < res.body.comments[0].length - 1; i++) {
+          expect(typeof res.body.comments[0][i].comment_id).toBe("number");
+          expect(typeof res.body.comments[0][i].article_id).toBe("number");
+          expect(typeof res.body.comments[0][i].body).toBe("string");
+          expect(typeof res.body.comments[0][i].votes).toBe("number");
+          expect(typeof res.body.comments[0][i].author).toBe("string");
+          expect(typeof res.body.comments[0][i].created_at).toBe("string");
+        }
+        let datesArray = res.body.comments.map(
+          (comment) => new Date(comment.created_at)
+        );
+        expect(datesArray).toBeSorted({ descending: true });
+      });
+
+})
+  
+  });
+
+  test("should return 400 if required fields are missing", async () => {
+    const commentData = {}; //brittle test?
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(commentData)
+.expect(400).then((res) =>{
+  expect(res.body).toEqual({ error: "Missing required fields" });
+})
+
+  });
+
+  test("should return 404 if article does not exist", async () => {
+    const commentData = {
+      body: "This is a test comment",
+      author: "icellusedkars",
+    };
+    return request(app)
+    .post("/api/articles/999/comments")
+    .send(commentData)
+.expect(404).then((res) =>{
+  expect(res.body).toEqual({ error: "Article not found" });  });
+})
+
+test("500: responds with server error for unexpected issues", () => {
+  return request(app)
+    .post("/api/articles/not-an-id/comments") // Invalid ID format
+    .send({ body: "test comment 500", author: "user123" })
+    .expect(500)
+    .then((res) => {
+      expect(res.body).toEqual({ error: "Internal Server Error" });
+    });
+});
+
+})
