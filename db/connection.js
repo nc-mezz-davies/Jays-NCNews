@@ -18,7 +18,6 @@ if (ENV === "production") {
     config.max = 2;
     console.log("prod env selected")
   }
-  module.exports = new Pool(config);
+  module.exports = new Pool(config), db;
 
 
-module.exports = db;
