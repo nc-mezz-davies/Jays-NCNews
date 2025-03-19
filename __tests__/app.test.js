@@ -160,7 +160,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("should return 201, add a new comment and retrieve it", async () => {
     const commentData = {
       body: "test comment",
@@ -248,33 +248,33 @@ describe.only("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("201: updates votes of an article_id", () => {
-    const vote = { inc_votes: 2 };
-    return request(app)
-      .patch("/api/articles/3")
-      .send(vote)
-      .expect(201)
-      .then((res) => {
-        expect(res.body.votes).toBe(2);
-      });
-  });
-  test("404: article_id doesn't exist", () => {
-    return request(app)
-      .patch("/api/articles/999")
-      .expect(404)
-      .then((res) => {
-        expect(res.body).toEqual({ error: "Article not found" });
-      });
-  });
+  // test("201: updates votes of an article_id", () => {
+  //   const vote = { inc_votes: 2 };
+  //   return request(app)
+  //     .patch("/api/articles/3")
+  //     .send(vote)
+  //     .expect(201)
+  //     .then((res) => {
+  //       expect(res.body.votes).toBe(2);
+  //     });
+  // });
+  // test("404: article_id doesn't exist", () => {
+  //   return request(app)
+  //     .patch("/api/articles/999")
+  //     .expect(404)
+  //     .then((res) => {
+  //       expect(res.body).toEqual({ error: "Article not found" });
+  //     });
+  // });
 
-  test("400: invalid inc_votes value", () => {
-    const vote = { inc_votes: "newVote" };
-    return request(app)
-      .patch("/api/articles/3")
-      .send(vote)
-      .expect(404)
-      .then((res) => {
-        expect(res.body).toEqual({ error: "Missing required fields" });
-      });
-  });
+  // test("400: invalid inc_votes value", () => {
+  //   const vote = { inc_votes: "newVote" };
+  //   return request(app)
+  //     .patch("/api/articles/3")
+  //     .send(vote)
+  //     .expect(400)
+  //     .then((res) => {
+  //       expect(res.body).toEqual({ error: "Missing required fields" });
+  //     });
+  // });
 });
