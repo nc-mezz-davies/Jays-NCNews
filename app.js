@@ -10,12 +10,12 @@ const {
 const {
   getArticles,
   getArticlesByID,
+  editArticle,
 } = require("./MVC/Controllers/articles.controllers.js");
 const {
   getCommentsByArticleID,
   postCommentOnArticleID
 } = require("./MVC/Controllers/comments.controllers.js");
-const  validateComment  = require("./middleware/post.js");
 app.get("/api", (req, res) => {
   res.status(200).json({ endpoints: endpointsJson });
 });
@@ -32,7 +32,7 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleID);
 
 app.post("/api/articles/:article_id/comments", postCommentOnArticleID);
 
-
+app.patch("/api/articles/:article_id", editArticle);
 
 
 app.use(handleCustomErrors);

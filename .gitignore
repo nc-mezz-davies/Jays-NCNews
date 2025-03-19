@@ -4,3 +4,4 @@ query_tasks
 tasklist.txt
 sql_playground.sql
 playground.txt
+.env.production

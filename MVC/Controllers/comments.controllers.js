@@ -1,14 +1,15 @@
-const validateComment = require("../../middleware/post.js");
+
+const { fetchArticlesByID } = require("../Models/articles.models.js");
 const {
   fetchCommentsByArticleID,
   insertComment,
-  checkArticleExists
+  
 } = require("../Models/comments.models.js");
 
 const getCommentsByArticleID = (req, res, next) => {
   const { article_id } = req.params;
 
-  checkArticleExists(article_id)
+  fetchArticlesByID(article_id)
     .then(() => {
       return fetchCommentsByArticleID(article_id);
     })

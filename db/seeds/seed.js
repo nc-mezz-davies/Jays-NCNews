@@ -86,9 +86,9 @@ function createComments() {
   return db.query(`CREATE TABLE comments(
     comment_id SERIAL PRIMARY KEY NOT NULL, 
     article_id INT, 
-    body TEXT ,
+    body TEXT NOT NULL,
     votes INT DEFAULT 0, 
-    author VARCHAR,
+    author VARCHAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (article_id) REFERENCES articles(article_id) ON DELETE CASCADE,
     FOREIGN KEY (author) REFERENCES users(username) ON DELETE CASCADE
