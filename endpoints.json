@@ -12,6 +12,7 @@
   "GET /api/articles": {
     "description": "Serves an array of all articles.",
     "queries": [],
+    "default-sortedBy": "created_at",
     "exampleResponse": {
       "articles": [
         {
@@ -75,6 +76,29 @@
         "body": "This is a new comment.",
         "created_at": "2025-03-13T10:00:00.000Z",
         "votes": 0
+      }
+    }
+  },
+
+  "PATCH /api/articles/:article_id/comments": {
+    "description": "updates the votes of an article with specified article_id",
+    "queries": [],
+    "exampleRequest": {
+      "body": {
+        "inc_votes": 1
+        
+      }
+    },
+    "exampleResponse": {
+      "article": {
+        "article_id": 2,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "body": "Text from the article...",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": 1,
+        "comment_count": 6
       }
     }
   }

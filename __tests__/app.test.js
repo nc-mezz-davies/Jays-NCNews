@@ -235,46 +235,53 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(res.body).toEqual({ error: "Invalid Article ID" });
       });
   });
-
-  // test("500: responds with server error for unexpected issues", () => {
-  //   return request(app)
-  //     .post("/api/articles/not-an-id/comments") 
-  //     .send({ body: "test comment 500", author: null }) //null author
-  //     .expect(500)
-  //     .then((res) => {
-  //       expect(res.body).toEqual({ error: "Internal Server Error" });
-  //     });
-  // });
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  // test("201: updates votes of an article_id", () => {
-  //   const vote = { inc_votes: 2 };
-  //   return request(app)
-  //     .patch("/api/articles/3")
-  //     .send(vote)
-  //     .expect(201)
-  //     .then((res) => {
-  //       expect(res.body.votes).toBe(2);
-  //     });
-  // });
-  // test("404: article_id doesn't exist", () => {
-  //   return request(app)
-  //     .patch("/api/articles/999")
-  //     .expect(404)
-  //     .then((res) => {
-  //       expect(res.body).toEqual({ error: "Article not found" });
-  //     });
-  // });
+  test("201: updates votes of an article_id", () => {
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(vote)
+      .expect(201)
+      .then((res) => {
+        expect(res.body.article.votes).toBe(1);
+      });
+  });
+  test("404: article_id doesn't exist", () => {
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(vote)
+      .expect(404)
+      .then((res) => {
+        expect(res.body).toEqual({ error: "Article not found" });
+      });
+  });
 
-  // test("400: invalid inc_votes value", () => {
-  //   const vote = { inc_votes: "newVote" };
-  //   return request(app)
-  //     .patch("/api/articles/3")
-  //     .send(vote)
-  //     .expect(400)
-  //     .then((res) => {
-  //       expect(res.body).toEqual({ error: "Missing required fields" });
-  //     });
-  // });
+  test("400: invalid inc_votes value", () => {
+    const vote = { inc_votes: "newVote" };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(vote)
+      .expect(400)
+      .then((res) => {
+        expect(res.body).toEqual({ error: "Invalid inc_votes value" });
+      });
+  });
+});
+
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: deletes a comment from comment id", () => {
+
+    return request(app)
+      .delete("/api/comments/3")
+      
+      .expect(204)
+      .then((res) => {
+        expect(res.body).toEqual({});
+      });
+  });
+  //404 no comment exists
 });
