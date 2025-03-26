@@ -1,8 +1,10 @@
 
+
 const { fetchArticlesByID } = require("../Models/articles.models.js");
 const {
   fetchCommentsByArticleID,
   insertComment,
+  deleteComment,
   
 } = require("../Models/comments.models.js");
 
@@ -35,4 +37,22 @@ const postCommentOnArticleID = (req, res, next) => {
 
 };
 
-module.exports = { getCommentsByArticleID, postCommentOnArticleID };
+const DeleteCommentByID = (req, res, next) => {
+ 
+  const { comment_id } = req.params;
+  
+  
+
+  deleteComment(comment_id)
+    .then((deletedComment) => {
+      if (!deletedComment) {
+        return res.status(404).json({ msg: "Comment not found" });
+      }
+      res.sendStatus(204); 
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+module.exports = { getCommentsByArticleID, postCommentOnArticleID, DeleteCommentByID };

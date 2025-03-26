@@ -14,7 +14,8 @@ const {
 } = require("./MVC/Controllers/articles.controllers.js");
 const {
   getCommentsByArticleID,
-  postCommentOnArticleID
+  postCommentOnArticleID,
+  DeleteCommentByID
 } = require("./MVC/Controllers/comments.controllers.js");
 app.get("/api", (req, res) => {
   res.status(200).json({ endpoints: endpointsJson });
@@ -34,6 +35,7 @@ app.post("/api/articles/:article_id/comments", postCommentOnArticleID);
 
 app.patch("/api/articles/:article_id", editArticle);
 
+app.delete("/api/comments/:comment_id", DeleteCommentByID);
 
 app.use(handleCustomErrors);
 app.use(handleServerErrors);

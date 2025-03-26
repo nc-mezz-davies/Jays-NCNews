@@ -35,11 +35,10 @@ const fetchArticlesByID = (id) => {
   });
 };
 
-const updateArticleVotes = (req) => {
-  const { article_id } = req.params;
-  const { inc_votes } = req.body;
+const updateArticleVotes = (id, votes) => {
 
-  if (!Number.isInteger(inc_votes.inc_votes)) {
+
+  if (!Number.isInteger(votes)) {
     return Promise.reject({ status: 400, msg: "Invalid inc_votes value" });
   }
 
@@ -50,14 +49,15 @@ const updateArticleVotes = (req) => {
       RETURNING *;
   `;
 
-  db.query(query, [inc_votes, article_id])
+    return db.query(query, [votes, id])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Article not found" });
       }
-      res.status(201).json({ article: rows[0] });
+  
+     return rows[0];
     })
-    .catch(next);
+    
 };
 
 module.exports = { fetchArticles, fetchArticlesByID, updateArticleVotes };
